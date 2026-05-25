@@ -4,7 +4,7 @@
  */
 
 import React, { useState } from 'react';
-import { YearlyProjection } from '../types';
+import { YearlyProjection, CalculatorInputs } from '../types';
 import { Landmark, TrendingUp, DollarSign, Activity } from 'lucide-react';
 
 interface ProceedsChartProps {
@@ -12,13 +12,17 @@ interface ProceedsChartProps {
   initialOutlay: number;
   forecastYears: number;
   onForecastYearsChange: (years: number) => void;
+  inputs: CalculatorInputs;
+  setInputs: React.Dispatch<React.SetStateAction<CalculatorInputs>>;
 }
 
 export default function ProceedsChart({ 
   projections, 
   initialOutlay,
   forecastYears,
-  onForecastYearsChange
+  onForecastYearsChange,
+  inputs,
+  setInputs
 }: ProceedsChartProps) {
   const [activeYearIndex, setActiveYearIndex] = useState<number>(Math.min(4, projections.length - 1));
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
@@ -122,6 +126,72 @@ export default function ProceedsChart({
                 RM {Math.round(activeData.netProfitIfSold).toLocaleString()}
               </strong>
             </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Quick Sensitivity Controls Bar */}
+      <div id="quick-sensitivity-bar" className="mb-6 bg-slate-50 border border-slate-200 rounded-sm p-4 flex flex-col md:flex-row gap-5 justify-between items-start md:items-center">
+        <div className="space-y-0.5">
+          <span className="text-[10px] font-bold text-indigo-700 uppercase tracking-widest font-mono flex items-center gap-1.5">
+            <span className="w-2 h-2 bg-indigo-505 bg-indigo-600 rounded-full animate-pulse"></span>
+            Quick Sensitivity Sandbox
+          </span>
+          <p className="text-xs text-slate-505 font-medium">Test vacancy periods or housing growth rates instantly and watch the ROI timeline shift.</p>
+        </div>
+
+        <div className="flex flex-wrap gap-5 items-center w-full md:w-auto">
+          {/* Vacancy Selector */}
+          <div className="space-y-1">
+            <span className="text-[9px] font-mono font-bold text-slate-400 uppercase tracking-wider block">Vacancy Scenario:</span>
+            <div className="flex bg-white border border-slate-200 rounded-sm p-0.5 shadow-sm">
+              {[
+                { label: '12m Rent', val: 12, desc: 'Perfect Year' },
+                { label: '11m Rent', val: 11, desc: 'Typical Gap' },
+                { label: '10m Rent', val: 10, desc: 'Hard Vacancy' }
+              ].map((opt) => (
+                <button
+                  type="button"
+                  key={opt.val}
+                  onClick={() => setInputs(prev => ({ ...prev, occupancyMonthsPerYear: opt.val }))}
+                  className={`px-3 py-1 text-[10px] font-bold rounded-sm transition-all cursor-pointer ${
+                    inputs.occupancyMonthsPerYear === opt.val
+                      ? 'bg-indigo-600 text-white shadow-sm'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                  }`}
+                  title={opt.desc}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Appreciation Selector */}
+          <div className="space-y-1">
+            <span className="text-[9px] font-mono font-bold text-slate-400 uppercase tracking-wider block">Annual Growth (Appreciation):</span>
+            <div className="flex bg-white border border-slate-200 rounded-sm p-0.5 shadow-sm">
+              {[
+                { label: '+1.0%', val: 1.0, desc: 'Stagnant (1.0%)' },
+                { label: '+3.0%', val: 3.0, desc: 'Standard (3.0%)' },
+                { label: '+4.5%', val: 4.5, desc: 'Healthy (4.5%)' },
+                { label: '+6.0%', val: 6.0, desc: 'Booming (6.0%)' }
+              ].map((opt) => (
+                <button
+                  type="button"
+                  key={opt.val}
+                  onClick={() => setInputs(prev => ({ ...prev, appreciationRate: opt.val }))}
+                  className={`px-3 py-1 text-[10px] font-bold rounded-sm transition-all cursor-pointer ${
+                    inputs.appreciationRate === opt.val
+                      ? 'bg-emerald-600 text-white shadow-sm'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                  }`}
+                  title={opt.desc}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </div>

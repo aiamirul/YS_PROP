@@ -261,6 +261,8 @@ export default function App() {
                 initialOutlay={upfrontCosts.totalInitialOutlay} 
                 forecastYears={forecastYears}
                 onForecastYearsChange={setForecastYears}
+                inputs={inputs}
+                setInputs={setInputs}
               />
 
               {/* Middle Row Full-width: Saved Property Side-by-Side Comparison Matrix */}
